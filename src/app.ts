@@ -1,5 +1,6 @@
 import express, { urlencoded, type Request, type Response } from "express";
 import sendResponse from "./utility/sendResponse";
+import { authRoute } from "./modules/auth/auth.route";
 const app = express();
 
 app.use(express.json());
@@ -14,6 +15,7 @@ app.get("/", async (req: Request, res: Response) => {
     })
 });
 
-// app.use("/api/auth",)
+// users registration and login
+app.use("/api/auth", authRoute);
 
 export default app;
