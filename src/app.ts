@@ -12,6 +12,8 @@ app.get("/", async (req: Request, res: Response) => {
         success: true,
         message: "This is root route of Dev Pulse"
     })
-})
+});
+
+// app.use("/api/auth",)
 
 export default app;
