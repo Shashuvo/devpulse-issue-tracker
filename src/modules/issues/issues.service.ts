@@ -18,7 +18,7 @@ const createIssuesIntoDB = async (payload: ISSUES, reporter_id: string) => {
 const getSingleIssueFromDB = async (id: string) => {
     const singleIssue = await dbQuery(`SELECT * FROM issues WHERE id = $1`, [id]);
     if (singleIssue.rows.length === 0) {
-        throw new AppError("Not found! No user with this id", 404)
+        throw new AppError("Not found! No issue exists with this id", 404)
     }
 
     const issue = singleIssue.rows[0];
@@ -46,12 +46,12 @@ const getSingleIssueFromDB = async (id: string) => {
 };
 
 
-// update a issue into DB
+// update an issue into DB
 const updateIssueIntoDB = async (id: string, payload: ISSUES, user_id: string, user_role: string) => {
     const issueExists = await dbQuery(`SELECT * FROM issues WHERE id = $1`, [id]);
 
     if (issueExists.rows.length === 0) {
-        throw new AppError("Not found! No user with this id", 404);
+        throw new AppError("Not found! No issues exists with this id", 404);
     }
 
     const issue = issueExists.rows[0];
@@ -78,10 +78,23 @@ const updateIssueIntoDB = async (id: string, payload: ISSUES, user_id: string, u
     const updatedIssue = await dbQuery(`UPDATE issues SET title = COALESCE($1, title), description = COALESCE($2, description), type = COALESCE($3, type), status = COALESCE($4, status), updated_at = NOW() WHERE id = $5 RETURNING *`, [title, description, type, status, id]);
     return updatedIssue.rows[0];
 
-}
+};
+
+// delete an issue from DB
+const deleteIssueFromDB = async (id: string) => {
+    const issueExists = await dbQuery(`SELECT * FROM issues WHERE id = $1`, [id]);
+
+    if (issueExists.rows.length === 0) {
+        throw new AppError("Not found! No issues exists with this id", 404);
+    }
+
+    await dbQuery(`DELETE FROM issues WHERE id = $1`, [id]);
+
+};
 
 export const issuesService = {
     createIssuesIntoDB,
     getSingleIssueFromDB,
     updateIssueIntoDB,
+    deleteIssueFromDB,
 }
