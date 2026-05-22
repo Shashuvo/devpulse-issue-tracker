@@ -5,7 +5,15 @@ import { issuesService } from "./issues.service";
 // create a issue
 const createIssues = async (req: Request, res: Response) => {
     try {
-      const result = await issuesService.createIssuesIntoDB(req.body);  
+        const reporter_id = req.user.id;
+        const result = await issuesService.createIssuesIntoDB(req.body, reporter_id);
+        sendResponse(res, {
+            statusCode: 201,
+            success: true,
+            message: "Issue created successfully",
+            data: result
+        });
+
     } catch (error: any) {
         sendResponse(res, {
             statusCode: 500,
