@@ -2,6 +2,7 @@ import express, { urlencoded, type Request, type Response } from "express";
 import sendResponse from "./utility/sendResponse";
 import { authRoute } from "./modules/auth/auth.route";
 import logger from "./middleware/logger";
+import { issuesRoute } from "./modules/issues/issues.route";
 const app = express();
 
 app.use(express.json());
@@ -19,5 +20,8 @@ app.get("/", async (req: Request, res: Response) => {
 
 // users registration and login
 app.use("/api/auth", authRoute);
+
+// issue CRUD
+app.use("/api/issues", issuesRoute);
 
 export default app;
