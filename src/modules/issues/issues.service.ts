@@ -92,9 +92,14 @@ const deleteIssueFromDB = async (id: string) => {
 
 };
 
+const getAllIssuesFromDB = async () => {
+    console.log("all issues");
+}
+
 export const issuesService = {
     createIssuesIntoDB,
     getSingleIssueFromDB,
     updateIssueIntoDB,
     deleteIssueFromDB,
+    getAllIssuesFromDB
 }

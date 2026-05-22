@@ -16,6 +16,9 @@ router.get("/:id", issuesController.getSingleIssue);
 router.put("/:id", auth(AUTH_USER.contributor, AUTH_USER.maintainer), issuesController.updateIssue);
 
 // delete a issue
-router.delete("/:id", auth(AUTH_USER.maintainer), issuesController.deleteIssue)
+router.delete("/:id", auth(AUTH_USER.maintainer), issuesController.deleteIssue);
+
+// get all issues
+router.get("/", issuesController.getAllIssues);
 
 export const issuesRoute = router;

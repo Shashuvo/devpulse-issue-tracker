@@ -86,10 +86,16 @@ const deleteIssue = async (req: Request, res: Response) => {
     }
 }
 
+// get all issues
+const getAllIssues = async (req: Request, res: Response) => {
+    const result = await issuesService.getAllIssuesFromDB();
+}
+
 
 export const issuesController = {
     createIssues,
     getSingleIssue,
     updateIssue,
     deleteIssue,
+    getAllIssues
 }
