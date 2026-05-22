@@ -1,9 +1,10 @@
 
 import AppError from "../../utility/appError";
 import dbQuery from "../../utility/dbQuery";
+import type { ISSUES } from "./issues.interface";
 
 // create issues in DB
-const createIssuesIntoDB = async (payload: any, reporter_id: string) => {
+const createIssuesIntoDB = async (payload: ISSUES, reporter_id: string) => {
     const { title, description, type, status } = payload;
 
     const insertIssuesIntoDB = await dbQuery(`
@@ -42,9 +43,16 @@ const getSingleIssueFromDB = async (id: string) => {
         updated_at: issue.updated_at
     }
 
+};
+
+
+// update a issue into DB
+const updateIssueIntoDB = async (id: string, payload: ISSUES, user_id: string, user_role: string) => {
+    const issueExists = await dbQuery(`SELECT * FROM issues WHERE id = $1`,[id]);
 }
 
 export const issuesService = {
     createIssuesIntoDB,
     getSingleIssueFromDB,
+    updateIssueIntoDB,
 }

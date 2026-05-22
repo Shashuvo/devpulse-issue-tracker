@@ -10,6 +10,9 @@ const router = Router();
 router.post("/", auth(AUTH_USER.contributor, AUTH_USER.maintainer), issuesController.createIssues);
 
 // get single issue
-router.get("/:id", issuesController.getSingleIssue)
+router.get("/:id", issuesController.getSingleIssue);
+
+// update issue
+router.put("/:id", auth(AUTH_USER.contributor, AUTH_USER.maintainer), issuesController.updateIssue);
 
 export const issuesRoute = router;

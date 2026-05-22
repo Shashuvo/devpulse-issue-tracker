@@ -32,7 +32,9 @@ const auth = (...roles: ROLES[]) => {
                     message: "User not found!",
                 })
             };
-            if (roles.length && !roles.includes(userData.rows[0].role)) {
+
+            const user = userData.rows[0];
+            if (roles.length && !roles.includes(user.role)) {
                 console.log("no access");
                 sendResponse(res, {
                     statusCode: 403,
