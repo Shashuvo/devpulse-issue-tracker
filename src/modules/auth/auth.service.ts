@@ -1,7 +1,9 @@
 
+import config from "../../config";
 import { pool } from "../../db";
 import type { CREDENTIALS, USER } from "./auth.interface";
 import bcrypt from "bcrypt";
+import jwt, { type Secret, type SignOptions } from "jsonwebtoken";
 
 // register a user into DB
 const createUserIntoDB = async (payload: USER) => {
@@ -38,9 +40,19 @@ const getUserFromDB = async (payload: CREDENTIALS) => {
         throw new Error("Invalid password!")
     }
 
+    const jwtPayload = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+    }
+
+    const accessToken = jwt.sign(jwtPayload, config.secret , { expiresIn: "1d" });
+    
+
     delete user.password;
 
-    return user;
+    return {"token": accessToken, "user": user};
 }
 
 export const authService = {
