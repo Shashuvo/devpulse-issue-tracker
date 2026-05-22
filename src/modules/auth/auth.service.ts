@@ -1,6 +1,6 @@
 
 import { pool } from "../../db";
-import type { USER } from "./auth.interface";
+import type { CREDENTIALS, USER } from "./auth.interface";
 import bcrypt from "bcrypt";
 
 // register a user into DB
@@ -10,12 +10,40 @@ const createUserIntoDB = async (payload: USER) => {
     const hashPassword = await bcrypt.hash(password, 10);
 
     const insertIntoDB = await pool.query(`
-        INSERT INTO users(name,email,password,role) VALUES( $1, $2, $3, COALESCE($4, 'contributor')) RETURNING *
+        INSERT INTO users(name, email, password, role) VALUES( $1, $2, $3, COALESCE($4, 'contributor')) RETURNING *
     `, [name, email, hashPassword, role]);
     delete insertIntoDB.rows[0].password;
     return insertIntoDB;
 };
 
+
+
+// get user from DB through login
+const getUserFromDB = async (payload: CREDENTIALS) => {
+    const { email, password } = payload;
+
+    const userData = await pool.query(`
+        SELECT * FROM users WHERE email = $1
+    `, [email]);
+
+    if (userData.rows.length === 0) {
+        throw new Error("Invalid credentials!");
+    }
+
+    const user = userData.rows[0];
+
+    const matchPassword = await bcrypt.compare(password, user.password);
+
+    if (!matchPassword) {
+        throw new Error("Invalid password!")
+    }
+
+    delete user.password;
+
+    return user;
+}
+
 export const authService = {
     createUserIntoDB,
+    getUserFromDB,
 }

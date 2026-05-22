@@ -3,4 +3,10 @@ export interface USER {
     email: string;
     password: string;
     role?: string;
+};
+
+
+export interface CREDENTIALS {
+    email: string;
+    password: string
 }
