@@ -50,6 +50,12 @@ const updateIssue = async (req: Request, res: Response) => {
         const { id } = req.params;
         const { id: user_id, role: user_role } = req.user;
         const result = await issuesService.updateIssueIntoDB(id as string, req.body, user_id, user_role);
+        sendResponse(res, {
+            statusCode: 200,
+            success: true,
+            message: "Issue updated successfully",
+            data: result
+        });
     } catch (error: any) {
         sendResponse(res, {
             statusCode: 500,

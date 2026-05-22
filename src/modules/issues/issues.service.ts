@@ -48,7 +48,36 @@ const getSingleIssueFromDB = async (id: string) => {
 
 // update a issue into DB
 const updateIssueIntoDB = async (id: string, payload: ISSUES, user_id: string, user_role: string) => {
-    const issueExists = await dbQuery(`SELECT * FROM issues WHERE id = $1`,[id]);
+    const issueExists = await dbQuery(`SELECT * FROM issues WHERE id = $1`, [id]);
+
+    if (issueExists.rows.length === 0) {
+        throw new AppError("Not found! No user with this id", 404);
+    }
+
+    const issue = issueExists.rows[0];
+
+    const { title, description, type, status } = payload;
+
+    // check permission for contributor
+    if (user_role === "contributor") {
+        //check reporter id match the user id
+        if (issue.reporter_id !== user_id) {
+            throw new AppError("Forbidden! You can only update your own issues", 403);
+        }
+        //status can be edited by only maintainer
+        if (status) {
+            console.log("status");
+            throw new AppError("Forbidden! Only maintainer can update status", 403);
+        }
+        //contributor can update open status only
+        if (issue.status !== "open") {
+            throw new AppError("Forbidden! You can only update issues with open status", 403);
+        }
+    };
+
+    const updatedIssue = await dbQuery(`UPDATE issues SET title = COALESCE($1, title), description = COALESCE($2, description), type = COALESCE($3, type), status = COALESCE($4, status), updated_at = NOW() WHERE id = $5 RETURNING *`, [title, description, type, status, id]);
+    return updatedIssue.rows[0];
+
 }
 
 export const issuesService = {
