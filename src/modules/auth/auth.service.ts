@@ -1,9 +1,10 @@
 
 import config from "../../config";
+import AppError from "../../utility/appError";
 import dbQuery from "../../utility/dbQuery";
 import type { CREDENTIALS, USER } from "./auth.interface";
 import bcrypt from "bcrypt";
-import jwt, { type Secret, type SignOptions } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 // register a user into DB
 const createUserIntoDB = async (payload: USER) => {
@@ -29,7 +30,7 @@ const getUserFromDB = async (payload: CREDENTIALS) => {
     `, [email]);
 
     if (userData.rows.length === 0) {
-        throw new Error("Invalid credentials!");
+        throw new AppError("Invalid Credentials", 404);
     }
 
     const user = userData.rows[0];
@@ -37,7 +38,7 @@ const getUserFromDB = async (payload: CREDENTIALS) => {
     const matchPassword = await bcrypt.compare(password, user.password);
 
     if (!matchPassword) {
-        throw new Error("Invalid password!")
+        throw new AppError("Invalid password!", 404);
     }
 
     const jwtPayload = {
