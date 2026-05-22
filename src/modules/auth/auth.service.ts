@@ -1,6 +1,6 @@
 
 import config from "../../config";
-import { pool } from "../../db";
+import dbQuery from "../../utility/dbQuery";
 import type { CREDENTIALS, USER } from "./auth.interface";
 import bcrypt from "bcrypt";
 import jwt, { type Secret, type SignOptions } from "jsonwebtoken";
@@ -11,8 +11,8 @@ const createUserIntoDB = async (payload: USER) => {
 
     const hashPassword = await bcrypt.hash(password, 10);
 
-    const insertIntoDB = await pool.query(`
-        INSERT INTO users(name, email, password, role) VALUES( $1, $2, $3, COALESCE($4, 'contributor')) RETURNING *
+    const insertIntoDB = await dbQuery(`
+    INSERT INTO users(name, email, password, role) VALUES( $1, $2, $3, COALESCE($4, 'contributor')) RETURNING *
     `, [name, email, hashPassword, role]);
     delete insertIntoDB.rows[0].password;
     return insertIntoDB;
@@ -24,8 +24,8 @@ const createUserIntoDB = async (payload: USER) => {
 const getUserFromDB = async (payload: CREDENTIALS) => {
     const { email, password } = payload;
 
-    const userData = await pool.query(`
-        SELECT * FROM users WHERE email = $1
+    const userData = await dbQuery(`
+    SELECT * FROM users WHERE email = $1
     `, [email]);
 
     if (userData.rows.length === 0) {
@@ -46,12 +46,12 @@ const getUserFromDB = async (payload: CREDENTIALS) => {
         role: user.role,
     }
 
-    const accessToken = jwt.sign(jwtPayload, config.secret , { expiresIn: "1d" });
-    
+    const accessToken = jwt.sign(jwtPayload, config.secret, { expiresIn: "1d" });
+
 
     delete user.password;
 
-    return {"token": accessToken, "user": user};
+    return { "token": accessToken, "user": user };
 }
 
 export const authService = {

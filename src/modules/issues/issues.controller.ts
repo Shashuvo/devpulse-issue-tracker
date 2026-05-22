@@ -24,7 +24,14 @@ const createIssues = async (req: Request, res: Response) => {
     }
 };
 
+// get single issue
+const getSingleIssue = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const result = await issuesService.getSingleIssueFromDB(id as string);
+}
+
 
 export const issuesController = {
     createIssues,
+    getSingleIssue,
 }

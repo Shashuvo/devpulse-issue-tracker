@@ -2,8 +2,8 @@ import type { NextFunction, Request, Response } from "express";
 import sendResponse from "../utility/sendResponse";
 import jwt, { type JwtPayload } from "jsonwebtoken"
 import config from "../config";
-import { pool } from "../db";
 import type { ROLES } from "../types";
+import dbQuery from "../utility/dbQuery";
 
 const auth = (...roles: ROLES[]) => {
     return async (req: Request, res: Response, next: NextFunction) => {
@@ -20,9 +20,9 @@ const auth = (...roles: ROLES[]) => {
 
             const decoded = jwt.verify(token as string, config.secret) as JwtPayload;
 
-            const userData = await pool.query(`
+            const userData = await dbQuery(`
             SELECT * FROM users WHERE email = $1
-        `, [decoded.email]);
+            `, [decoded.email]);
 
 
             if (userData.rows.length === 0) {
