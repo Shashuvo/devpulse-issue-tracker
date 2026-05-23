@@ -41,7 +41,7 @@ const auth = (...roles: ROLES[]) => {
                     statusCode: 403,
                     success: false,
                     message: "Forbidden!",
-                    errors: "Tour role has no access to this resource"
+                    errors: "Your role has no access to this resource"
                 })
             };
 
