@@ -1,7 +1,7 @@
 
 import AppError from "../../utility/appError";
 import dbQuery from "../../utility/dbQuery";
-import type { ISSUES } from "./issues.interface";
+import type { ISSUES, UPDATE_ISSUES } from "./issues.interface";
 
 // create issues in DB
 const createIssuesIntoDB = async (payload: ISSUES, reporter_id: string) => {
@@ -47,7 +47,7 @@ const getSingleIssueFromDB = async (id: string) => {
 
 
 // update an issue into DB
-const updateIssueIntoDB = async (id: string, payload: ISSUES, user_id: string, user_role: string) => {
+const updateIssueIntoDB = async (id: string, payload: UPDATE_ISSUES, user_id: string, user_role: string) => {
     const issueExists = await dbQuery(`SELECT * FROM issues WHERE id = $1`, [id]);
 
     if (issueExists.rows.length === 0) {
