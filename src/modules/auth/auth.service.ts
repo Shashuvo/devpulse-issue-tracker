@@ -30,7 +30,7 @@ const getUserFromDB = async (payload: CREDENTIALS) => {
     `, [email]);
 
     if (userData.rows.length === 0) {
-        throw new AppError("Invalid Credentials", 404);
+        throw new AppError("Not found!", 404, "No user exists with this email");
     }
 
     const user = userData.rows[0];
@@ -38,7 +38,7 @@ const getUserFromDB = async (payload: CREDENTIALS) => {
     const matchPassword = await bcrypt.compare(password, user.password);
 
     if (!matchPassword) {
-        throw new AppError("Invalid password!", 404);
+        throw new AppError("Invalid password!", 404,"The password you have given is wrong");
     }
 
     const jwtPayload = {

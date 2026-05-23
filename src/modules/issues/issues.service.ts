@@ -18,7 +18,7 @@ const createIssuesIntoDB = async (payload: ISSUES, reporter_id: string) => {
 const getSingleIssueFromDB = async (id: string) => {
     const singleIssue = await dbQuery(`SELECT * FROM issues WHERE id = $1`, [id]);
     if (singleIssue.rows.length === 0) {
-        throw new AppError("Not found! No issue exists with this id", 404)
+        throw new AppError("Not found!", 404, "No issue exists with this id")
     }
 
     const issue = singleIssue.rows[0];
@@ -51,7 +51,7 @@ const updateIssueIntoDB = async (id: string, payload: UPDATE_ISSUES, user_id: st
     const issueExists = await dbQuery(`SELECT * FROM issues WHERE id = $1`, [id]);
 
     if (issueExists.rows.length === 0) {
-        throw new AppError("Not found! No issues exists with this id", 404);
+        throw new AppError("Not found!", 404, "No issue exists with this id");
     }
 
     const issue = issueExists.rows[0];
@@ -62,16 +62,16 @@ const updateIssueIntoDB = async (id: string, payload: UPDATE_ISSUES, user_id: st
     if (user_role === "contributor") {
         //check reporter id match the user id
         if (issue.reporter_id !== user_id) {
-            throw new AppError("Forbidden! You can only update your own issues", 403);
+            throw new AppError("Forbidden!", 403, "You can only update your own issues");
         }
         //status can be edited by only maintainer
         if (status) {
             console.log("status");
-            throw new AppError("Forbidden! Only maintainer can update status", 403);
+            throw new AppError("Forbidden!", 403, "Only maintainer can update status");
         }
         //contributor can update open status only
         if (issue.status !== "open") {
-            throw new AppError("Forbidden! You can only update issues with open status", 403);
+            throw new AppError("Forbidden!", 403, "You can only update issues with open status");
         }
     };
 
@@ -85,7 +85,7 @@ const deleteIssueFromDB = async (id: string) => {
     const issueExists = await dbQuery(`SELECT * FROM issues WHERE id = $1`, [id]);
 
     if (issueExists.rows.length === 0) {
-        throw new AppError("Not found! No issues exists with this id", 404);
+        throw new AppError("Not found!", 404, "No issues exists with this id");
     }
 
     await dbQuery(`DELETE FROM issues WHERE id = $1`, [id]);
@@ -123,7 +123,7 @@ const getAllIssuesFromDB = async (payload: ISSUE_QUERY) => {
 
     const issues = issuesResult.rows;
     if (issues.length === 0) {
-        throw new AppError("No issues to show", 204)
+        throw new AppError("No content!", 204, "No issues to show");
     };
 
     // Fetch reporter info for each issue

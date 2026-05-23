@@ -3,6 +3,7 @@ import sendResponse from "./utility/sendResponse";
 import { authRoute } from "./modules/auth/auth.route";
 import logger from "./middleware/logger";
 import { issuesRoute } from "./modules/issues/issues.route";
+import globalErrorHandler from "./utility/globalErrorHandler";
 const app = express();
 
 app.use(express.json());
@@ -23,5 +24,8 @@ app.use("/api/auth", authRoute);
 
 // issue CRUD
 app.use("/api/issues", issuesRoute);
+
+// global error handler
+app.use(globalErrorHandler);
 
 export default app;

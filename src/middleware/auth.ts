@@ -15,6 +15,7 @@ const auth = (...roles: ROLES[]) => {
                     statusCode: 401,
                     success: false,
                     message: "Unauthorized access!",
+                    errors: "No valid token given"
                 })
             };
 
@@ -30,16 +31,17 @@ const auth = (...roles: ROLES[]) => {
                     statusCode: 404,
                     success: false,
                     message: "User not found!",
+                    errors:"No user found with this token"
                 })
             };
 
             const user = userData.rows[0];
             if (roles.length && !roles.includes(user.role)) {
-                console.log("no access");
                 sendResponse(res, {
                     statusCode: 403,
                     success: false,
-                    message: "Forbidden! This role have no access.",
+                    message: "Forbidden!",
+                    errors: "Tour role has no access to this resource"
                 })
             };
 

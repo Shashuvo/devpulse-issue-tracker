@@ -20,7 +20,7 @@ const createIssues = async (req: Request, res: Response) => {
             statusCode: 500,
             success: false,
             message: error.message,
-            errors: error.message
+            errors: error.errors
         })
     }
 };
@@ -40,7 +40,7 @@ const getSingleIssue = async (req: Request, res: Response) => {
             statusCode: 500,
             success: false,
             message: error.message,
-            errors: error.message
+            errors: error.errors
         })
     }
 };
@@ -62,7 +62,7 @@ const updateIssue = async (req: Request, res: Response) => {
             statusCode: 500,
             success: false,
             message: error.message,
-            errors: error.message
+            errors: error.errors
         })
     }
 }
@@ -82,7 +82,7 @@ const deleteIssue = async (req: Request, res: Response) => {
             statusCode: 500,
             success: false,
             message: error.message,
-            errors: error.message
+            errors: error.errors
         })
     }
 }
@@ -102,7 +102,7 @@ const getAllIssues = async (req: Request, res: Response) => {
             statusCode: 500,
             success: false,
             message: error.message,
-            errors: error.message
+            errors: error.errors
         })
     }
 }
