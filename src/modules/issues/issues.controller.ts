@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import sendResponse from "../../utility/sendResponse";
 import { issuesService } from "./issues.service";
+import type { ISSUE_QUERY } from "./issues.interface";
 
 // create a issue
 const createIssues = async (req: Request, res: Response) => {
@@ -88,7 +89,22 @@ const deleteIssue = async (req: Request, res: Response) => {
 
 // get all issues
 const getAllIssues = async (req: Request, res: Response) => {
-    const result = await issuesService.getAllIssuesFromDB();
+    try {
+        const query = req.query as unknown as ISSUE_QUERY;
+        const result = await issuesService.getAllIssuesFromDB(query);
+        sendResponse(res, {
+            statusCode: 200,
+            success: true,
+            data: result,
+        });
+    } catch (error: any) {
+        sendResponse(res, {
+            statusCode: 500,
+            success: false,
+            message: error.message,
+            errors: error.message
+        })
+    }
 }
 
 

@@ -1,7 +1,7 @@
 
 import AppError from "../../utility/appError";
 import dbQuery from "../../utility/dbQuery";
-import type { ISSUES, UPDATE_ISSUES } from "./issues.interface";
+import type { ISSUE_QUERY, ISSUES, UPDATE_ISSUES } from "./issues.interface";
 
 // create issues in DB
 const createIssuesIntoDB = async (payload: ISSUES, reporter_id: string) => {
@@ -92,8 +92,61 @@ const deleteIssueFromDB = async (id: string) => {
 
 };
 
-const getAllIssuesFromDB = async () => {
-    console.log("all issues");
+const getAllIssuesFromDB = async (payload: ISSUE_QUERY) => {
+    const { sort = "newest", type, status } = payload;
+
+    const conditions: string[] = [];
+    const values: unknown[] = [];
+    let index = 1;
+
+    if (type) {
+        conditions.push(`type = $${index++}`);
+        values.push(type);
+    }
+
+    if (status) {
+        conditions.push(`status = $${index++}`);
+        values.push(status);
+    }
+
+    const whereClause = conditions.length
+        ? `WHERE ${conditions.join(" AND ")}`
+        : "";
+    const orderClause =
+        sort === "oldest" ? "ORDER BY created_at ASC" : "ORDER BY created_at DESC";
+
+    // Fetch all issues
+    const issuesResult = await dbQuery(
+        `SELECT * FROM issues ${whereClause} ${orderClause}`,
+        values,
+    );
+
+    const issues = issuesResult.rows;
+    if (issues.length === 0) {
+        throw new AppError("No issues to show", 204)
+    };
+
+    // Fetch reporter info for each issue
+    const result = await Promise.all(
+        issues.map(async (issue) => {
+            const reporterResult = await dbQuery(
+                `SELECT id, name, role FROM users WHERE id = $1`,
+                [issue.reporter_id],
+            );
+            const reporter = reporterResult.rows[0];
+            return {
+                id: issue.id,
+                title: issue.title,
+                description: issue.description,
+                type: issue.type,
+                status: issue.status,
+                reporter,
+                created_at: issue.created_at,
+                updated_at: issue.updated_at,
+            };
+        }),
+    );
+    return result;
 }
 
 export const issuesService = {
