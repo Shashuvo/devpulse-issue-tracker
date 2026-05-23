@@ -5,7 +5,7 @@ type TResponse<T> = {
     success: boolean;
     message?: string;
     data?: T;
-    errors?: string;
+    errors?: any;
 }
 
 const sendResponse = <T>(res: Response, data: TResponse<T>) => {

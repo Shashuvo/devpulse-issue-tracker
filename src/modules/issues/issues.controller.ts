@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import sendResponse from "../../utility/sendResponse";
 import { issuesService } from "./issues.service";
 import type { ISSUE_QUERY } from "./issues.interface";
+import type { CatchError } from "../../utility/catchError";
 
 // create a issue
 const createIssues = async (req: Request, res: Response) => {
@@ -15,12 +16,13 @@ const createIssues = async (req: Request, res: Response) => {
             data: result
         });
 
-    } catch (error: any) {
+    } catch (error) {
+        const err = error as CatchError;
         sendResponse(res, {
             statusCode: 500,
             success: false,
-            message: error.message,
-            errors: error.errors
+            message: err.message,
+            errors: err.errors
         })
     }
 };
@@ -35,12 +37,13 @@ const getSingleIssue = async (req: Request, res: Response) => {
             success: true,
             data: result
         });
-    } catch (error: any) {
+    } catch (error) {
+        const err = error as CatchError;
         sendResponse(res, {
             statusCode: 500,
             success: false,
-            message: error.message,
-            errors: error.errors
+            message: err.message,
+            errors: err.errors
         })
     }
 };
@@ -57,12 +60,13 @@ const updateIssue = async (req: Request, res: Response) => {
             message: "Issue updated successfully",
             data: result
         });
-    } catch (error: any) {
+    } catch (error) {
+        const err = error as CatchError;
         sendResponse(res, {
             statusCode: 500,
             success: false,
-            message: error.message,
-            errors: error.errors
+            message: err.message,
+            errors: err.errors
         })
     }
 }
@@ -77,12 +81,13 @@ const deleteIssue = async (req: Request, res: Response) => {
             success: true,
             message: "Issue deleted successfully",
         });
-    } catch (error: any) {
+    } catch (error) {
+        const err = error as CatchError;
         sendResponse(res, {
             statusCode: 500,
             success: false,
-            message: error.message,
-            errors: error.errors
+            message: err.message,
+            errors: err.errors
         })
     }
 }
@@ -97,12 +102,13 @@ const getAllIssues = async (req: Request, res: Response) => {
             success: true,
             data: result,
         });
-    } catch (error: any) {
+    } catch (error) {
+        const err = error as CatchError;
         sendResponse(res, {
             statusCode: 500,
             success: false,
-            message: error.message,
-            errors: error.errors
+            message: err.message,
+            errors: err.errors
         })
     }
 }

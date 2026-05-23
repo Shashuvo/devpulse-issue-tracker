@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { authService } from "./auth.service";
 import sendResponse from "../../utility/sendResponse";
+import type { CatchError } from "../../utility/catchError";
 
 // register a user
 const createUser = async (req: Request, res: Response) => {
@@ -13,12 +14,13 @@ const createUser = async (req: Request, res: Response) => {
             data: result.rows[0]
         });
 
-    } catch (error: any) {
+    } catch (error) {
+        const err = error as CatchError;
         sendResponse(res, {
             statusCode: 500,
             success: false,
-            message: error.message,
-            errors: error.errors
+            message: err.message,
+            errors: err.errors
         })
     }
 };
@@ -34,12 +36,13 @@ const loginUser = async (req: Request, res: Response) => {
             data: result
         });
 
-    } catch (error: any) {
+    } catch (error) {
+        const err = error as CatchError;
         sendResponse(res, {
             statusCode: 500,
             success: false,
-            message: error.message,
-            errors: error.errors
+            message: err.message,
+            errors: err.errors
         })
     }
 }
